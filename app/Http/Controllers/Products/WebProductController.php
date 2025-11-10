@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\Product;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class WebProductController extends Controller
 {
@@ -32,8 +33,7 @@ class WebProductController extends Controller
             ];
         });
 
-        // Log products for debugging
-        \Log::info('Products data:', ['products' => $products->toArray()]);
+        Log::info('Products data:', ['products' => $products->toArray()]);
 
         return Inertia::render('products/index', [
             'products' => $products,
