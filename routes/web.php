@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -12,7 +13,11 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        $profile = \App\Models\Profile::where('user_id', auth()->id())->first();
+        
+        return Inertia::render('dashboard', [
+            'profile' => $profile,
+        ]);
     })->name('dashboard');
 
     // Categories
@@ -30,6 +35,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('products/{product}/edit', [\App\Http\Controllers\Products\WebProductController::class, 'edit'])->name('products.edit');
     Route::put('products/{product}', [\App\Http\Controllers\Products\WebProductController::class, 'update'])->name('products.update');
     Route::delete('products/{product}', [\App\Http\Controllers\Products\WebProductController::class, 'destroy'])->name('products.destroy');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile/{id?}', [ProfileController::class, 'show']);
+    Route::post('/profile', [ProfileController::class, 'create']);
+    Route::put('/profile/{id?}', [ProfileController::class, 'update']);
+    Route::delete('/profile/{id?}', [ProfileController::class, 'delete']);
 });
 
 require __DIR__.'/auth.php';
